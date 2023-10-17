@@ -19,6 +19,22 @@ def extract(source):
     return value
 
 
+def send_mail(message):
+    host = "smtp.gmail.com"
+    port = 465
+
+    username = "momo9211654@gmail.com"
+    password = os.getenv("PASSWORD")
+
+    receiver = "momo9211654@gmail.com"
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL(host, port, context=context) as server:
+        server.login(username, password)
+        server.sendmail(username, receiver, message)
+    print("Email was sent!")
+
+
 def store(extracted):
     try:
         with open('data.txt', 'a') as file:
@@ -46,4 +62,10 @@ print(extracted)
 if extracted != "No upcoming tours":
     if extracted not in content:
         store(extracted)
+        message = f"""\
+Subject: Hey, new event was found!
+
+event: {extracted}
+"""
+        send_mail(message)
 
